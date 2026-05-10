@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: #16a9ea;
+    --color-secondary: #fbdc0d;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-gray-950 text-white;
+    font-family: var(--font-cairo), sans-serif;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+}
+
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto;
+  }
+
+  .section-badge {
+    @apply inline-block text-primary font-bold text-sm uppercase tracking-widest mb-4;
+  }
+
+  .section-title {
+    @apply text-4xl md:text-5xl font-black text-white leading-tight;
+  }
+
+  .section-subtitle {
+    @apply text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed;
+  }
+
+  .btn-whatsapp {
+    @apply flex items-center gap-3 bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-2xl font-black text-xl transition-all duration-300 hover:shadow-[0_0_40px_rgba(34,197,94,0.5)] hover:scale-105 active:scale-95 justify-center;
+  }
+
+  .btn-outline {
+    @apply flex items-center gap-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-8 py-4 rounded-2xl font-bold text-xl transition-all duration-300 hover:border-primary/50 justify-center;
+  }
+
+  .glass-card {
+    @apply bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-l from-primary to-blue-300;
+  }
+
+  .glow-blue {
+    box-shadow: 0 0 30px rgba(22, 169, 234, 0.4);
+  }
+
+  .glow-yellow {
+    box-shadow: 0 0 30px rgba(251, 220, 13, 0.4);
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #16a9ea;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4fc3f7;
+}
+
+/* Selection */
+::selection {
+  background: rgba(22, 169, 234, 0.3);
+  color: white;
+}
+
+/* Gradient orbs */
+.orb-blue {
+  background: radial-gradient(circle, rgba(22, 169, 234, 0.3) 0%, transparent 70%);
+}
+
+.orb-yellow {
+  background: radial-gradient(circle, rgba(251, 220, 13, 0.2) 0%, transparent 70%);
+}
+
+/* Grid background */
+.grid-bg {
+  background-image: linear-gradient(rgba(22, 169, 234, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 169, 234, 0.06) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Animated gradient border */
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(22, 169, 234, 0.3); }
+  50% { border-color: rgba(22, 169, 234, 0.8); }
+}
+
+.border-glow {
+  animation: borderGlow 3s ease-in-out infinite;
+}
