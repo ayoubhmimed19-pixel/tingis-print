@@ -31,11 +31,12 @@ function KanbanCard({ lead, isDragging, onDragStart, onDragEnd }: {
       draggable
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
+      className="crm-kanban-card"
       style={{
         background: isDragging ? 'rgba(22,169,234,0.08)' : 'rgba(255,255,255,0.04)',
         border: `1px solid ${isDragging ? '#16a9ea' : 'rgba(255,255,255,0.08)'}`,
         borderRadius: '12px', padding: '14px', cursor: 'grab',
-        opacity: isDragging ? 0.6 : 1, transition: 'all 0.15s', userSelect: 'none',
+        opacity: isDragging ? 0.6 : 1, userSelect: 'none',
       }}
     >
       {/* Header */}
@@ -239,7 +240,7 @@ export default function Dashboard() {
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
       <Sidebar />
 
-      <div style={{ flex: 1, marginRight: '220px', display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <div className="crm-main" style={{ display: 'flex', flexDirection: 'column' }}>
 
         {/* Header */}
         <header style={{
@@ -297,7 +298,7 @@ export default function Dashboard() {
 
         {/* Filter Bar */}
         {showFilters && (
-          <div style={{
+          <div className="crm-filter-bar crm-fade-in" style={{
             padding: '12px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)',
             background: 'rgba(255,255,255,0.01)',
             display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap',
@@ -343,7 +344,7 @@ export default function Dashboard() {
         )}
 
         {/* Stats bar */}
-        <div style={{ display: 'flex', gap: '10px', padding: '14px 24px 0', flexWrap: 'wrap' }}>
+        <div className="crm-stats-bar" style={{ display: 'flex', gap: '10px', padding: '14px 24px 0', flexWrap: 'wrap' }}>
           {[
             { label: 'إجمالي',      value: stats.total,      color: '#16a9ea', suffix: '' },
             { label: 'جديد',        value: stats.new,        color: '#3b82f6', suffix: '' },
@@ -366,11 +367,11 @@ export default function Dashboard() {
 
         {/* Kanban Board */}
         {loading ? (
-          <div style={{ display: 'flex', gap: '14px', padding: '16px 24px 24px', overflowX: 'auto', flex: 1, alignItems: 'flex-start' }}>
+          <div className="crm-kanban-board" style={{ display: 'flex', gap: '14px', padding: '16px 24px 24px', overflowX: 'auto', flex: 1, alignItems: 'flex-start' }}>
             {KANBAN_COLUMNS.map(col => <KanbanColumnSkeleton key={col.id} />)}
           </div>
         ) : (
-          <div style={{ display: 'flex', gap: '14px', padding: '16px 24px 24px', overflowX: 'auto', flex: 1, alignItems: 'flex-start' }}>
+          <div className="crm-kanban-board" style={{ display: 'flex', gap: '14px', padding: '16px 24px 24px', overflowX: 'auto', flex: 1, alignItems: 'flex-start' }}>
             {KANBAN_COLUMNS.map(col => {
               const colLeads = filtered.filter(l => (l.kanban_column || 'new') === col.id)
               const isOver   = dragOverCol === col.id
@@ -400,8 +401,10 @@ export default function Dashboard() {
                   {/* Cards */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', overflowY: 'auto', flex: 1 }}>
                     {colLeads.length === 0 ? (
-                      <div style={{ border: `2px dashed ${col.color}30`, borderRadius: '10px', padding: '24px', textAlign: 'center', color: '#4b5563', fontSize: '12px' }}>
-                        أفلت بطاقة هنا
+                      <div className="crm-empty" style={{ border: `2px dashed ${col.color}20`, borderRadius: '10px', padding: '28px 16px' }}>
+                        <div className="crm-empty-icon">📋</div>
+                        <div className="crm-empty-title">لا توجد طلبات</div>
+                        <div className="crm-empty-sub">أفلت بطاقة هنا</div>
                       </div>
                     ) : colLeads.map(lead => (
                       <KanbanCard
@@ -419,12 +422,7 @@ export default function Dashboard() {
         )}
       </div>
 
-      <style>{`
-        @keyframes shimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
-        @media (max-width: 768px) {
-          div[style*="margin-right: 220px"] { margin-right: 0 !important; }
-        }
-      `}</style>
+      <style>{`@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}`}</style>
     </div>
   )
 }

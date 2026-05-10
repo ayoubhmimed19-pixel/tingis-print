@@ -179,7 +179,7 @@ export default function AnalyticsPage() {
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
       <Sidebar />
 
-      <div style={{ flex: 1, marginRight: '220px', display: 'flex', flexDirection: 'column' }}>
+      <div className="crm-main" style={{ display: 'flex', flexDirection: 'column' }}>
 
         {/* Header */}
         <header style={{
@@ -193,7 +193,7 @@ export default function AnalyticsPage() {
           {userId && <NotificationBell userId={userId} />}
         </header>
 
-        <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
+        <div className="crm-content" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
 
           {/* Stats Cards */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '14px' }}>
@@ -213,7 +213,7 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Monthly orders + Service */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div className="crm-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div style={card}>
               <h3 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: 'white' }}>الطلبات الشهرية</h3>
               <BarChart data={monthlyData} />

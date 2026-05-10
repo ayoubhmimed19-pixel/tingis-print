@@ -206,7 +206,7 @@ export default function ClientProfilePage() {
                   const col = KANBAN_COLUMNS.find(c => c.id === (lead.kanban_column || 'new'))
                   return (
                     <Link key={lead.id} href={`/admin/leads/${lead.id}`} style={{ textDecoration: 'none' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px', padding: '12px 14px', transition: 'border-color 0.15s' }}>
+                      <div className="crm-list-item" style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px', padding: '12px 14px' }}>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: '13px', fontWeight: 700, color: 'white', marginBottom: '2px' }}>{lead.service}</div>
                           <div style={{ fontSize: '11px', color: '#6b7280' }}>{formatDate(lead.created_at)}</div>

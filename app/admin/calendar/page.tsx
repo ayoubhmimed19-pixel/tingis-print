@@ -77,7 +77,7 @@ export default function CalendarPage() {
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
       <Sidebar />
 
-      <div style={{ flex: 1, marginRight: '220px', display: 'flex', flexDirection: 'column' }}>
+      <div className="crm-main" style={{ display: 'flex', flexDirection: 'column' }}>
 
         {/* Header */}
         <header style={{

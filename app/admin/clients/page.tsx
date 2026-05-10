@@ -72,7 +72,7 @@ export default function ClientsPage() {
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
       <Sidebar />
 
-      <div style={{ flex: 1, marginRight: '220px', display: 'flex', flexDirection: 'column' }}>
+      <div className="crm-main" style={{ display: 'flex', flexDirection: 'column' }}>
 
         {/* Header */}
         <header style={{
@@ -114,8 +114,10 @@ export default function ClientsPage() {
               جارٍ التحميل...
             </div>
           ) : filtered.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px 0', color: '#6b7280' }}>
-              لا يوجد عملاء بعد
+            <div className="crm-empty">
+              <div className="crm-empty-icon">👥</div>
+              <div className="crm-empty-title">{search ? 'لا توجد نتائج' : 'لا يوجد عملاء بعد'}</div>
+              <div className="crm-empty-sub">{search ? 'جرب كلمة بحث أخرى' : 'سيظهر العملاء هنا بعد أول طلب'}</div>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -125,11 +127,11 @@ export default function ClientsPage() {
                   href={`/admin/clients/${encodeURIComponent(client.phone)}`}
                   style={{ textDecoration: 'none' }}
                 >
-                  <div style={{
+                  <div className="crm-list-item" style={{
                     background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
                     borderRadius: '14px', padding: '16px 20px',
                     display: 'flex', alignItems: 'center', gap: '14px',
-                    cursor: 'pointer', transition: 'border-color 0.15s',
+                    cursor: 'pointer',
                   }}>
                     {/* Avatar */}
                     <div style={{

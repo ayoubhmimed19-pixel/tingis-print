@@ -278,7 +278,7 @@ export default function LeadDetail() {
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0a0a' }}>
       <Sidebar />
 
-      <div style={{ flex: 1, marginRight: '220px', display: 'flex', flexDirection: 'column' }}>
+      <div className="crm-main" style={{ display: 'flex', flexDirection: 'column' }}>
 
         {/* Header */}
         <header style={{
@@ -302,7 +302,7 @@ export default function LeadDetail() {
           {userId && <NotificationBell userId={userId} />}
         </header>
 
-        <div style={{ padding: '24px', display: 'grid', gridTemplateColumns: '1fr 360px', gap: '20px', maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
+        <div className="crm-grid-detail crm-content" style={{ padding: '24px', display: 'grid', gridTemplateColumns: '1fr 360px', gap: '20px', maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
 
           {/* Left column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
