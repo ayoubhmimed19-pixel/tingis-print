@@ -38,6 +38,7 @@ export type Lead = {
   tags: string[]
   deadline: string | null
   priority: Priority
+  price: number
   position: number
   profiles?: Profile | null
 }

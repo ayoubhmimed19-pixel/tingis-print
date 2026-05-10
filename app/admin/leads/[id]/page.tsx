@@ -508,6 +508,30 @@ export default function LeadDetail() {
               </div>
             </div>
 
+            {/* Price */}
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '18px' }}>
+              <h4 style={{ margin: '0 0 12px', fontSize: '14px', fontWeight: 700, color: '#9ca3af' }}>قيمة الطلب (د.م)</h4>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+                defaultValue={lead.price || 0}
+                onBlur={async (e) => {
+                  const price = parseFloat(e.target.value) || 0
+                  const { error } = await supabase.from('leads').update({ price }).eq('id', id)
+                  if (error) { toast.error('فشل حفظ القيمة'); return }
+                  setLead(prev => prev ? { ...prev, price } : null)
+                  if (price > 0) toast.success(`تم حفظ القيمة: ${price.toLocaleString('ar-MA')} د.م`)
+                }}
+                style={{
+                  width: '100%', background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '10px', padding: '10px 12px', color: '#22c55e', fontSize: '16px',
+                  fontWeight: 700, outline: 'none', fontFamily: 'Cairo, sans-serif', boxSizing: 'border-box',
+                }}
+              />
+            </div>
+
             {/* Deadline */}
             <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '18px' }}>
               <h4 style={{ margin: '0 0 12px', fontSize: '14px', fontWeight: 700, color: '#9ca3af' }}>موعد التسليم</h4>

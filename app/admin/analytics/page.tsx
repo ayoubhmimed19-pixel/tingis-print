@@ -96,14 +96,22 @@ export default function AnalyticsPage() {
 
   // ── Computed stats ──────────────────────────────────────────────────────────
 
-  const total      = leads.length
-  const completed  = leads.filter(l => l.kanban_column === 'completed').length
-  const thisMonth  = leads.filter(l => {
+  const total         = leads.length
+  const completed     = leads.filter(l => l.kanban_column === 'completed').length
+  const now           = new Date()
+  const thisMonth     = leads.filter(l => {
     const d = new Date(l.created_at)
-    const now = new Date()
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
   }).length
   const conversionRate = total > 0 ? Math.round((completed / total) * 100) : 0
+  const totalRevenue   = leads.reduce((s, l) => s + (l.price || 0), 0)
+  const monthRevenue   = leads.filter(l => {
+    const d = new Date(l.created_at)
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+  }).reduce((s, l) => s + (l.price || 0), 0)
+  const avgOrder = completed > 0
+    ? Math.round(leads.filter(l => l.kanban_column === 'completed').reduce((s, l) => s + (l.price || 0), 0) / completed)
+    : 0
 
   // Orders per month (last 7 months)
   const monthlyData = Array.from({ length: 7 }, (_, i) => {
@@ -177,16 +185,18 @@ export default function AnalyticsPage() {
         <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
 
           {/* Stats Cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '14px' }}>
             {[
-              { label: 'إجمالي الطلبات', value: total,           color: '#16a9ea', suffix: '' },
-              { label: 'هذا الشهر',      value: thisMonth,       color: '#8b5cf6', suffix: '' },
-              { label: 'مكتملة',         value: completed,       color: '#22c55e', suffix: '' },
-              { label: 'معدل الإنجاز',   value: conversionRate,  color: '#f59e0b', suffix: '%' },
+              { label: 'إجمالي الطلبات',  value: total,                                              color: '#16a9ea', suffix: '' },
+              { label: 'هذا الشهر',       value: thisMonth,                                          color: '#8b5cf6', suffix: '' },
+              { label: 'مكتملة',          value: completed,                                          color: '#22c55e', suffix: '' },
+              { label: 'معدل الإنجاز',    value: conversionRate,                                     color: '#f59e0b', suffix: '%' },
+              { label: 'إجمالي الإيرادات',value: totalRevenue > 0 ? `${totalRevenue.toLocaleString('ar-MA')}` : '—', color: '#06b6d4', suffix: totalRevenue > 0 ? ' د.م' : '' },
+              { label: 'متوسط الطلب',     value: avgOrder > 0 ? `${avgOrder.toLocaleString('ar-MA')}` : '—',        color: '#ec4899', suffix: avgOrder > 0 ? ' د.م' : '' },
             ].map((s, i) => (
               <div key={i} style={{ background: `${s.color}10`, border: `1px solid ${s.color}20`, borderRadius: '14px', padding: '18px 20px' }}>
-                <div style={{ fontSize: '32px', fontWeight: 900, color: s.color }}>{s.value}{s.suffix}</div>
-                <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px', fontWeight: 600 }}>{s.label}</div>
+                <div style={{ fontSize: '26px', fontWeight: 900, color: s.color, lineHeight: 1.2 }}>{s.value}{s.suffix}</div>
+                <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '6px', fontWeight: 600 }}>{s.label}</div>
               </div>
             ))}
           </div>
