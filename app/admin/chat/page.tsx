@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { FaPaperPlane, FaMicrophone, FaStop, FaPlay, FaPause, FaAt } from 'react-icons/fa'
+import { FaPaperPlane, FaMicrophone, FaStop, FaPlay, FaPause, FaAt, FaPaperclip, FaFileAlt, FaDownload } from 'react-icons/fa'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase-browser'
-import { Profile, getInitials, ROLE_COLORS, formatDate } from '@/lib/supabase'
+import { Profile, getInitials, ROLE_COLORS } from '@/lib/supabase'
 import Sidebar from '@/components/admin/Sidebar'
 import NotificationBell from '@/components/admin/NotificationBell'
 
@@ -14,6 +14,8 @@ type Message = {
   user_id: string
   content: string | null
   audio_url: string | null
+  file_url: string | null
+  file_name: string | null
   mentions: string[]
   created_at: string
   profiles?: Pick<Profile, 'id' | 'name' | 'email' | 'avatar_url' | 'role'> | null
@@ -130,9 +132,11 @@ export default function ChatPage() {
   const [typingUsers, setTypingUsers] = useState<string[]>([])
   const [showMentions, setShowMentions] = useState(false)
   const [mentionQuery, setMentionQuery] = useState('')
-  const [sending, setSending]     = useState(false)
-  const bottomRef  = useRef<HTMLDivElement>(null)
-  const inputRef   = useRef<HTMLTextAreaElement>(null)
+  const [sending, setSending]       = useState(false)
+  const [uploadingFile, setUploadingFile] = useState(false)
+  const bottomRef   = useRef<HTMLDivElement>(null)
+  const inputRef    = useRef<HTMLTextAreaElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const channelRef = useRef<ReturnType<ReturnType<typeof createClient>['channel']> | null>(null)
   const typingTimer = useRef<NodeJS.Timeout | null>(null)
 
@@ -227,7 +231,7 @@ export default function ChatPage() {
     inputRef.current?.focus()
   }
 
-  const sendMessage = async (content: string, audioUrl?: string) => {
+  const sendMessage = async (content: string, audioUrl?: string, fileUrl?: string, fileName?: string) => {
     if (!userId) return
     setSending(true)
 
@@ -237,6 +241,8 @@ export default function ChatPage() {
       user_id: userId,
       content: content || null,
       audio_url: audioUrl || null,
+      file_url: fileUrl || null,
+      file_name: fileName || null,
       mentions,
     })
 
@@ -267,6 +273,19 @@ export default function ChatPage() {
       e.preventDefault()
       if (text.trim()) sendMessage(text.trim())
     }
+  }
+
+  const handleFileSend = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !userId) return
+    setUploadingFile(true)
+    const path = `chat/${Date.now()}_${file.name}`
+    const { error: uploadError } = await supabase.storage.from('chat-files').upload(path, file)
+    if (uploadError) { toast.error('فشل رفع الملف'); setUploadingFile(false); return }
+    const { data: { publicUrl } } = supabase.storage.from('chat-files').getPublicUrl(path)
+    await sendMessage('', undefined, publicUrl, file.name)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+    setUploadingFile(false)
   }
 
   const handleVoiceSend = async (blob: Blob) => {
@@ -382,6 +401,21 @@ export default function ChatPage() {
                         padding: msg.audio_url ? '6px' : '10px 14px',
                       }}>
                         {msg.audio_url && <AudioPlayer url={msg.audio_url} />}
+                        {msg.file_url && (() => {
+                          const isImage = /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(msg.file_name || msg.file_url)
+                          return isImage ? (
+                            <a href={msg.file_url} target="_blank" rel="noopener noreferrer">
+                              <img src={msg.file_url} alt={msg.file_name || 'صورة'} style={{ maxWidth: '220px', maxHeight: '180px', borderRadius: '8px', display: 'block', objectFit: 'cover' }} />
+                            </a>
+                          ) : (
+                            <a href={msg.file_url} target="_blank" rel="noopener noreferrer"
+                              style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.06)', borderRadius: '8px', padding: '8px 12px', textDecoration: 'none', color: '#e5e7eb' }}>
+                              <FaFileAlt style={{ color: '#8b5cf6', fontSize: '18px', flexShrink: 0 }} />
+                              <span style={{ fontSize: '12px', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{msg.file_name || 'ملف'}</span>
+                              <FaDownload style={{ fontSize: '12px', color: '#6b7280', flexShrink: 0 }} />
+                            </a>
+                          )
+                        })()}
                         {msg.content && (
                           <p style={{ margin: 0, fontSize: '14px', color: '#e5e7eb', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
                             {msg.content.split(/(@\S+)/g).map((part, j) =>
@@ -471,6 +505,17 @@ export default function ChatPage() {
                 }}
               />
             </div>
+
+            <label title="إرفاق ملف أو صورة" style={{
+              width: '40px', height: '40px', borderRadius: '10px', border: 'none', cursor: 'pointer',
+              background: uploadingFile ? 'rgba(139,92,246,0.2)' : 'rgba(255,255,255,0.06)',
+              color: uploadingFile ? '#8b5cf6' : '#9ca3af',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}>
+              <FaPaperclip style={{ fontSize: '14px' }} />
+              <input ref={fileInputRef} type="file" style={{ display: 'none' }} onChange={handleFileSend} disabled={uploadingFile}
+                accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.psd,.ai" />
+            </label>
 
             <VoiceRecorder onSend={handleVoiceSend} />
 

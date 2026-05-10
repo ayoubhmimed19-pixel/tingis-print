@@ -127,6 +127,17 @@ export default function AnalyticsPage() {
     }
   })
 
+  // Revenue per month (last 7 months)
+  const monthlyRevenue = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date()
+    d.setMonth(d.getMonth() - (6 - i))
+    const rev = leads.filter(l => {
+      const ld = new Date(l.created_at)
+      return ld.getMonth() === d.getMonth() && ld.getFullYear() === d.getFullYear()
+    }).reduce((s, l) => s + (l.price || 0), 0)
+    return { label: d.toLocaleDateString('ar-MA', { month: 'short' }), value: rev }
+  })
+
   // Orders by service
   const serviceMap = new Map<string, number>()
   leads.forEach(l => serviceMap.set(l.service, (serviceMap.get(l.service) || 0) + 1))
@@ -201,19 +212,30 @@ export default function AnalyticsPage() {
             ))}
           </div>
 
-          {/* Monthly + Service */}
+          {/* Monthly orders + Service */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-
             <div style={card}>
               <h3 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: 'white' }}>الطلبات الشهرية</h3>
               <BarChart data={monthlyData} />
             </div>
-
             <div style={card}>
               <h3 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: 'white' }}>توزيع الخدمات</h3>
               <DonutChart data={serviceData} />
             </div>
           </div>
+
+          {/* Monthly revenue */}
+          {totalRevenue > 0 && (
+            <div style={card}>
+              <h3 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: 'white' }}>
+                الإيرادات الشهرية
+                <span style={{ marginRight: '10px', fontSize: '12px', color: '#8b5cf6', fontWeight: 600 }}>
+                  إجمالي: {totalRevenue.toLocaleString('ar-MA')} د.م
+                </span>
+              </h3>
+              <BarChart data={monthlyRevenue} color="#8b5cf6" />
+            </div>
+          )}
 
           {/* Kanban distribution */}
           <div style={card}>
