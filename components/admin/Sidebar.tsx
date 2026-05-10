@@ -59,8 +59,9 @@ export default function Sidebar() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Image src="/logo-v2.png" alt="Tingis Print" width={100} height={36}
             style={{ height: '32px', width: 'auto', objectFit: 'contain' }} />
-          <button onClick={() => setOpen(false)} style={{ display: 'none', background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer' }}
-            className="md-hide-close">
+          <button onClick={() => setOpen(false)}
+            className="sidebar-close-btn"
+            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#9ca3af', cursor: 'pointer', padding: '6px 8px', display: 'none' }}>
             <FaTimes />
           </button>
         </div>
@@ -130,19 +131,21 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile toggle button */}
-      <button
-        onClick={() => setOpen(true)}
-        style={{
-          position: 'fixed', top: '16px', right: '16px', zIndex: 50,
-          background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: '10px', padding: '8px 10px', color: 'white', cursor: 'pointer',
-          display: 'none',
-        }}
-        className="sidebar-toggle"
-      >
-        <FaBars />
-      </button>
+      {/* Mobile toggle — only when sidebar is closed */}
+      {!open && (
+        <button
+          onClick={() => setOpen(true)}
+          className="sidebar-toggle"
+          style={{
+            position: 'fixed', top: '14px', right: '14px', zIndex: 50,
+            background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: '10px', padding: '8px 10px', color: 'white', cursor: 'pointer',
+            display: 'none',
+          }}
+        >
+          <FaBars />
+        </button>
+      )}
 
       {/* Desktop sidebar */}
       <div className="sidebar-desktop">
@@ -153,7 +156,8 @@ export default function Sidebar() {
       {open && (
         <>
           <div onClick={() => setOpen(false)} style={{
-            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 39,
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', zIndex: 39,
+            backdropFilter: 'blur(2px)',
           }} />
           {sidebarContent}
         </>
@@ -161,8 +165,9 @@ export default function Sidebar() {
 
       <style>{`
         @media (max-width: 768px) {
-          .sidebar-toggle { display: flex !important; }
-          .sidebar-desktop { display: none; }
+          .sidebar-toggle    { display: flex !important; }
+          .sidebar-desktop   { display: none; }
+          .sidebar-close-btn { display: flex !important; align-items: center; justify-content: center; }
         }
       `}</style>
     </>
