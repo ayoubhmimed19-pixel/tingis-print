@@ -64,11 +64,15 @@ function VoiceRecorder({ onSend }: { onSend: (blob: Blob) => Promise<void> }) {
   const start = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const mr = new MediaRecorder(stream)
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus'
+        : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm'
+        : MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4'
+        : 'audio/ogg'
+      const mr = new MediaRecorder(stream, { mimeType })
       chunksRef.current = []
       mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data) }
       mr.onstop = async () => {
-        const blob = new Blob(chunksRef.current, { type: 'audio/webm' })
+        const blob = new Blob(chunksRef.current, { type: mimeType })
         stream.getTracks().forEach(t => t.stop())
         await onSend(blob)
         setSeconds(0)
@@ -266,9 +270,10 @@ export default function ChatPage() {
   }
 
   const handleVoiceSend = async (blob: Blob) => {
-    const fileName = `voice-${Date.now()}-${userId}.webm`
-    const { data, error } = await supabase.storage.from('voice-notes').upload(fileName, blob, { contentType: 'audio/webm' })
-    if (error) { toast.error('فشل رفع الملف الصوتي'); return }
+    const ext = blob.type.includes('mp4') ? 'mp4' : blob.type.includes('ogg') ? 'ogg' : 'webm'
+    const fileName = `voice-${Date.now()}-${userId}.${ext}`
+    const { data, error } = await supabase.storage.from('voice-notes').upload(fileName, blob, { contentType: blob.type })
+    if (error) { toast.error(`فشل رفع الملف: ${error.message}`); return }
     const { data: { publicUrl } } = supabase.storage.from('voice-notes').getPublicUrl(data.path)
     await sendMessage('', publicUrl)
     toast.success('تم إرسال الرسالة الصوتية')
