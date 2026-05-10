@@ -27,8 +27,10 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   const pathname = request.nextUrl.pathname
-  const isProtected = pathname.startsWith('/admin') && pathname !== '/admin'
-  const isLoginPage = pathname === '/admin'
+  // Handle trailing slash — /admin/ and /admin are both the login page
+  const cleanPath = pathname.endsWith('/') && pathname !== '/' ? pathname.slice(0, -1) : pathname
+  const isLoginPage = cleanPath === '/admin'
+  const isProtected = cleanPath.startsWith('/admin') && !isLoginPage
 
   if (isProtected && !user) {
     return NextResponse.redirect(new URL('/admin', request.url))
@@ -42,5 +44,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin', '/admin/:path*'],
+  matcher: ['/admin', '/admin/', '/admin/:path*'],
 }
