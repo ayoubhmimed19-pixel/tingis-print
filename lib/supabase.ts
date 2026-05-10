@@ -53,6 +53,16 @@ export type OrderActivity = {
   profiles?: Pick<Profile, 'id' | 'name' | 'avatar_url'> | null
 }
 
+export type OrderFile = {
+  id: string
+  lead_id: string
+  name: string
+  url: string
+  size: number | null
+  uploaded_by: string | null
+  created_at: string
+}
+
 export type Notification = {
   id: string
   user_id: string
