@@ -4,13 +4,15 @@ import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { FaTachometerAlt, FaUsers, FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa'
+import { FaTachometerAlt, FaUsers, FaSignOutAlt, FaBars, FaTimes, FaComments, FaAddressBook } from 'react-icons/fa'
 import { createClient } from '@/lib/supabase-browser'
 import { Profile, ROLE_LABELS, ROLE_COLORS, getInitials } from '@/lib/supabase'
 
 const NAV = [
-  { href: '/admin/dashboard', icon: FaTachometerAlt, label: 'الكانبان' },
-  { href: '/admin/team',      icon: FaUsers,         label: 'الفريق'   },
+  { href: '/admin/dashboard', icon: FaTachometerAlt, label: 'الكانبان'  },
+  { href: '/admin/chat',      icon: FaComments,      label: 'الشات'     },
+  { href: '/admin/clients',   icon: FaAddressBook,   label: 'العملاء'   },
+  { href: '/admin/team',      icon: FaUsers,         label: 'الفريق'    },
 ]
 
 export default function Sidebar() {
